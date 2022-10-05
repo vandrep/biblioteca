@@ -9,15 +9,16 @@ import javax.persistence.Entity;
 public class Funcionario extends Entidade {
 
     @Embedded
-    private Matricula matricula;
-    private boolean temLivroEmprestado;
+    public Matricula matricula;
+    public boolean temLivroEmprestado;
 
     public Funcionario() {
-        this.temLivroEmprestado = false;
+
     }
 
     public Funcionario(Matricula umMatricula) {
         this();
+        this.temLivroEmprestado = false;
         this.setMatriculaFuncionario(umMatricula);
     }
 
@@ -27,7 +28,7 @@ public class Funcionario extends Entidade {
 
     public Uni<Void> pegaLivro(Livro livro) {
         if (this.podePegarLivro()) {
-            temLivroEmprestado = true;
+            this.temLivroEmprestado = true;
             livro.ficaIndisponivel();
         }
         return Uni.createFrom().voidItem();
@@ -35,7 +36,7 @@ public class Funcionario extends Entidade {
 
     public Uni<Void> devolveLivro(Livro livro) {
         if (this.temLivroEmprestado) {
-            temLivroEmprestado = false;
+            this.temLivroEmprestado = false;
             livro.ficaDisponivel();
         }
         return Uni.createFrom().voidItem();

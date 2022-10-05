@@ -1,10 +1,11 @@
 package br.com.bb.atc.biblioteca.aplicacao.funcionario;
 
+import br.com.bb.atc.biblioteca.Fixtures;
 import br.com.bb.atc.biblioteca.dominio.modelo.Funcionario;
-import br.com.bb.atc.biblioteca.dominio.modelo.Matricula;
 import br.com.bb.atc.biblioteca.dominio.modelo.Livro;
+import br.com.bb.atc.biblioteca.dominio.modelo.Matricula;
 import br.com.bb.atc.biblioteca.porta.adaptador.persistencia.OracleDBFuncionarioRepository;
-import br.com.bb.atc.biblioteca.porta.adaptador.persistencia.OracleDBLivroRepository;
+import br.com.bb.atc.biblioteca.porta.adaptador.persistencia.RepositorioLivroOracle;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 import io.smallrye.mutiny.Uni;
@@ -19,9 +20,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @QuarkusTest
 class FuncionarioApplicationServiceTest {
+    @Inject
+    Fixtures fixtures;
 
     @InjectMock
-    OracleDBLivroRepository livroRepository;
+    RepositorioLivroOracle livroRepository;
 
     @InjectMock
     OracleDBFuncionarioRepository funcionarioRepository;
@@ -34,9 +37,9 @@ class FuncionarioApplicationServiceTest {
 
     @BeforeEach
     void criaFixtures() {
-        livro = new Livro("Refatoração");
+        livro = fixtures.criaLivroRefatoracao();
         var uniLivro = Uni.createFrom().item(livro);
-        Mockito.when(livroRepository.pegaLivroPeloNome(livro.nome())).thenReturn(uniLivro);
+        Mockito.when(livroRepository.pegaLivroPeloNome(livro.nome)).thenReturn(uniLivro);
 
         funcionario = new Funcionario(new Matricula("F0741372"));
         var uniFuncionario = Uni.createFrom().item(funcionario);
@@ -45,19 +48,19 @@ class FuncionarioApplicationServiceTest {
 
     @Test
     void pegarLivroEmprestado() {
-        var comando = new ComandoPegarLivroEmprestado(livro.nome(), funcionario.matricula());
+        var comando = new ComandoPegarLivroEmprestado(livro.nome, funcionario.matricula());
         funcionarioApplicationService.pegarLivroEmprestado(comando).await().indefinitely();
 
-        assertFalse(livroRepository.pegaLivroPeloNome(livro.nome()).await().indefinitely().estaDisponivel());
+        assertFalse(livroRepository.pegaLivroPeloNome(livro.nome).await().indefinitely().estaDisponivel);
         assertFalse(funcionarioRepository.pegaFuncionarioPorMatricula(funcionario.matricula()).await().indefinitely().podePegarLivro());
     }
 
     @Test
     void devolverLivroEmprestado() {
-        var comando = new ComandoDevolverLivroEmprestado(livro.nome(), funcionario.matricula());
+        var comando = new ComandoDevolverLivroEmprestado(livro.nome, funcionario.matricula());
         funcionarioApplicationService.devolverLivroEmprestado(comando).await().indefinitely();
 
-        assertTrue(livroRepository.pegaLivroPeloNome(livro.nome()).await().indefinitely().estaDisponivel());
+        assertTrue(livroRepository.pegaLivroPeloNome(livro.nome).await().indefinitely().estaDisponivel);
         assertTrue(funcionarioRepository.pegaFuncionarioPorMatricula(funcionario.matricula()).await().indefinitely().podePegarLivro());
     }
 }

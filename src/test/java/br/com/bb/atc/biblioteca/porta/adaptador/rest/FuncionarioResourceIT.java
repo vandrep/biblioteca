@@ -1,7 +1,6 @@
 package br.com.bb.atc.biblioteca.porta.adaptador.rest;
 
 import br.com.bb.atc.biblioteca.aplicacao.funcionario.ComandoPegarLivroEmprestado;
-import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
@@ -22,7 +21,9 @@ class FuncionarioResource2Test {
 
     @BeforeEach
     void criaFixtures() {
-        comandoPegarLivroEmprestado = new ComandoPegarLivroEmprestado("Refatoração", "F0741372");
+        comandoPegarLivroEmprestado =
+                new ComandoPegarLivroEmprestado("Refatoração",
+                        "F0741372");
     }
 
     @Test

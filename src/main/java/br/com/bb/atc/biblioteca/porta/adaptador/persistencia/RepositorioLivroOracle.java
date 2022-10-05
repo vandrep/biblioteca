@@ -6,10 +6,9 @@ import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.persistence.LockModeType;
 
 @ApplicationScoped
-public class OracleDBLivroRepository implements LivroRepository {
+public class RepositorioLivroOracle implements LivroRepository {
 
     @Override
     public Uni<Livro> pegaLivroPeloNome(String umNome) {

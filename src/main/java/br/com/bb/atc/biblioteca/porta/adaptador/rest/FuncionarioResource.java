@@ -1,5 +1,6 @@
 package br.com.bb.atc.biblioteca.porta.adaptador.rest;
 
+import br.com.bb.atc.biblioteca.aplicacao.funcionario.ComandoDevolverLivroEmprestado;
 import br.com.bb.atc.biblioteca.aplicacao.funcionario.FuncionarioApplicationService;
 import br.com.bb.atc.biblioteca.aplicacao.funcionario.ComandoPegarLivroEmprestado;
 import io.quarkus.hibernate.reactive.panache.common.runtime.ReactiveTransactional;
@@ -19,9 +20,17 @@ public class FuncionarioResource {
 
     @POST
     @Path("/pegalivro")
-    @ReactiveTransactional()
+    @ReactiveTransactional
     @Consumes(MediaType.APPLICATION_JSON)
     public Uni<Void> pegaLivro(ComandoPegarLivroEmprestado umComandoPegarLivroEmprestado) {
         return funcionarioApplicationService.pegarLivroEmprestado(umComandoPegarLivroEmprestado);
+    }
+
+    @POST
+    @Path("/devolvelivro")
+    @ReactiveTransactional
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Uni<Void> devolveLivro(ComandoDevolverLivroEmprestado umComandoDevolverLivroEmprestado) {
+        return funcionarioApplicationService.devolverLivroEmprestado(umComandoDevolverLivroEmprestado);
     }
 }
