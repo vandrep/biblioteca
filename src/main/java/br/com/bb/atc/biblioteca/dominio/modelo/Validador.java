@@ -24,8 +24,8 @@ public class Validador extends PanacheEntity {
         super();
     }
 
-    protected void assertPatternEquals(String aString, String aPattern, String aMessage){
-        if(!Pattern.compile(aPattern).matcher(aString).matches()){
+    protected void assertPatternEqualsIgnoreCase(String aString, String aPattern, String aMessage){
+        if(!Pattern.compile(aPattern, Pattern.CASE_INSENSITIVE).matcher(aString).matches()){
             throw new IllegalArgumentException(aMessage);
         }
     }

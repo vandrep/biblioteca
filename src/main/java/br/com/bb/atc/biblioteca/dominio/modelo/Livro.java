@@ -11,6 +11,7 @@ public class Livro extends Entidade {
     public String edicao;
     public String editora;
     public String isbn;
+    public String funcionarioLendo;
     public boolean estaDisponivel;
 
     public Livro() {
@@ -32,16 +33,24 @@ public class Livro extends Entidade {
         this.estaDisponivel = true;
     }
 
-    public void ficaIndisponivel() {
+    public void emprestaPara(String umFuncionario) {
         if (this.estaDisponivel) {
             this.estaDisponivel = false;
+            this.setFuncionarioLendo(umFuncionario);
+        } else {
+            throw new IllegalStateException("Livro não está disponível.");
         }
     }
 
-    public void ficaDisponivel() {
-        if (!this.estaDisponivel) {
-            this.estaDisponivel = true;
+    public void devolvePor(String umFuncionario) {
+        if (this.estaDisponivel) {
+            throw new IllegalStateException("Livro não está emprestado.");
         }
+        if (!this.funcionarioLendo.equalsIgnoreCase(umFuncionario)) {
+            throw new IllegalArgumentException("Funcionário informado não está lendo este livro.");
+        }
+        this.estaDisponivel = true;
+        this.setFuncionarioLendo(null);
     }
 
     private void setNome(String umNome) {
@@ -78,5 +87,16 @@ public class Livro extends Entidade {
         assertArgumentNotNull(umIsbn, "ISBN do Livro deve ser informado.");
         assertArgumentNotEmpty(umIsbn, "ISBN do Livro não pode estar vazio.");
         this.isbn = umIsbn;
+    }
+
+    private void setFuncionarioLendo(String umFuncionario) {
+        if (umFuncionario != null) {
+            String PADRAO_MATRICULA_FUNCI = "^F(\\d{7})$";
+            assertArgumentNotEmpty(umFuncionario, "Matrícula não pode estar vazia.");
+            assertPatternEqualsIgnoreCase(umFuncionario, PADRAO_MATRICULA_FUNCI, "Matrícula fora do padrão");
+            this.funcionarioLendo = umFuncionario.toUpperCase();
+        } else {
+            this.funcionarioLendo = null;
+        }
     }
 }
